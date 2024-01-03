@@ -78,6 +78,7 @@ int main(){
             scanf("%d", &ele);
 
             push(&myStack, ele);
+            initializeStack(&redoStack);
             display(&myStack);
             break;
 
