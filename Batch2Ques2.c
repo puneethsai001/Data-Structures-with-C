@@ -1,133 +1,124 @@
+//NOTE: The answer may not be 100% correct since the question is unclear
+
 #include <stdio.h>
 #define MAX_SIZE (20)
 
-typedef struct Queue{
+typedef struct Stack{
     int A[MAX_SIZE];
-    int front;
-    int rear;
-}Queue;
+    int top;
+}Stack;
 
-void initializeQueue(Queue *q){
-    q->front = 0;
-    q->rear = -1;
+void initializeStack(Stack *s){
+    s->top = -1;
 }
 
-void enqueue(Queue *q, int value){
-    if (q->rear == MAX_SIZE - 1){
-        printf("QUEUE OVERFLOW: ");
+void push(Stack *s, int value){
+    if (s->top == MAX_SIZE - 1){
+        printf("Stack Overflow");
         return;
     }
 
-    q->rear = q->rear + 1;
-    q->A[q->rear] = value;
+    s->top = s->top + 1;
+    s->A[s->top] = value;
 }
 
-int dequeue(Queue *q){
-
-    if (q->rear < q->front){
-        printf("NO PRINT JOBS: ");
+int pop(Stack *s){
+    if (s->top == -1){
+        printf("Stack Underflow");
         return 0;
     }
 
-    int a = q->A[q->front];
-    q->front = q->front + 1;
-    return a;
+    return s->A[s->top--];
 }
 
-void display(Queue *q){
-    if (q->front > q->rear){
-        printf("PRINTER QUEUE EMPTY\n");
+int isEmpty(Stack *s){
+    if (s->top == -1){
+        return 1;
+    }
+
+    return 0;
+}
+
+void display(Stack *s){
+    if (s->top == -1){
+        printf("Stack Empty\n");
         return;
     }
 
-    printf("Printer Status: ");
-    for (int i = q->front; i <= q->rear; i++){
-        printf("%d ",q->A[i]);
+    printf("Text Editor: ");
+    for (int i = 0; i < s->top+1; i++){
+        printf("%d ", s->A[i]);
     }
     printf("\n");
 }
 
-int rearValue(Queue *q){
-    return q->rear;
-}
-
-int frontValue(Queue *q){
-    return q->front;
-}
-
-
 int main(){
 
-    Queue myqueue;
-    initializeQueue(&myqueue);
+    Stack myStack, redoStack;
+
+    initializeStack(&myStack);
+    initializeStack(&redoStack);
 
     int choice, flag = 1;
-    int ele, temp, invalid = 1;
-    int computers[10];
-
-    for (int i = 1; i <= 10; i++){
-        computers[i-1] = i;
-    }
+    int ele;
 
     while (flag){
-        
-        printf("===================== Print Operation Menu =====================\n");
-        printf("1. Add a Print Job\n");
-        printf("2. Print a Job\n");
-        printf("3. Display Job Queue Status\n");
+        printf("\n1. Push an item\n");
+        printf("2. Undo previous operation\n");
+        printf("3. Redo previous operation\n");
         printf("4. Exit\n");
 
         printf("Enter Choice: ");
-        scanf("%d",&choice);
+        scanf("%d", &choice);
 
         switch (choice)
         {
         case 1:
-
-            printf("Enter Computer No: ");
+            printf("Enter Item: ");
             scanf("%d", &ele);
 
-            temp = rearValue(&myqueue);
-
-            enqueue(&myqueue, ele);
-
-            if (temp == rearValue(&myqueue)){
-                printf("CANT ADD MORE JOBS\n");
-            }
-
-            else{
-                printf("ADDED SUCCESSFULLY\n");
-            }
-
+            push(&myStack, ele);
+            initializeStack(&redoStack);
+            display(&myStack);
             break;
-        
+
         case 2:
-            temp = frontValue(&myqueue);
+            ele = pop(&myStack);
 
-            dequeue(&myqueue);
-
-            if (temp == frontValue(&myqueue)){
-                printf("CANT PRINT\n");
+            if (ele != 0){
+                push(&redoStack, ele);
+                printf("Undo Success\n");
             }
 
             else{
-                printf("PRINTED SUCCESSFULLY\n");
+                printf("\nUndo Unsuccessfull");
             }
 
+            display(&myStack);
             break;
-        
+
         case 3:
-            display(&myqueue);
+            ele = pop(&redoStack);
+
+            if (ele != 0){
+                push(&myStack, ele);
+                printf("Redo Success\n");
+            }
+
+            else{
+                printf("\nRedo Unsuccessfull\n");
+            }
+
+            display(&myStack);
             break;
         
         case 4:
             flag = 0;
             break;
-
+        
         default:
-            printf("Invalid Input\n");
+            break;
         }
     }
-
     return 0;
 }
