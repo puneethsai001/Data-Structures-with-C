@@ -42,6 +42,13 @@ Node *deleteData(Node *start, int id){
         return start;
     }
 
+    else if (start->expenseid == id){
+        Node *temp = start;
+        start = start->next;
+        free(temp);
+        return start;
+    }
+
     else{
         Node *ptr = start;
         Node *temp;
@@ -109,7 +116,7 @@ int main(){
     scanf("%d", &id);
 
     //funtion to search and delete
-    deleteData(financeList, id);
+    financeList = deleteData(financeList, id);
 
     //The list after deleting is
     printf("The records after deleting are: \n");
